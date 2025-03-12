@@ -34,6 +34,7 @@ def base_handler_failure() -> type[handler.Handler]:
 @pytest.fixture
 def base_handler_no_repository() -> type[handler.Handler]:
     class BaseHandlerNoRepository(handler.Handler):
+        _event_repository = None  # type: ignore[assignment]
         _success_status = constants.InboundEventStatus.HANDLED
         _failure_status = constants.InboundEventStatus.FAILED
 
@@ -47,6 +48,7 @@ def base_handler_no_repository() -> type[handler.Handler]:
 def base_handler_no_success_status() -> type[handler.Handler]:
     class BaseHandlerNoSuccessStatus(handler.Handler):
         _event_repository = repositories.InboundEventRepository()
+        _success_status = None  # type: ignore[assignment]
         _failure_status = constants.InboundEventStatus.FAILED
 
         def handle(self, event: entities.Event) -> None:
@@ -60,6 +62,7 @@ def base_handler_no_failure_status() -> type[handler.Handler]:
     class BaseHandlerNoFailureStatus(handler.Handler):
         _event_repository = repositories.InboundEventRepository()
         _success_status = constants.InboundEventStatus.HANDLED
+        _failure_status = None  # type: ignore[assignment]
 
         def handle(self, event: entities.Event) -> None:
             raise Exception
