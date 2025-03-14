@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Any
 
@@ -11,6 +12,7 @@ class OutboundEventRepository(repositories.EventRepository):
         event_type: str,
         payload: dict[str, Any],
         queue: str,
+        timestamp: datetime.datetime,
         trace_id: uuid.UUID,
         event_id: uuid.UUID | None = None,
     ) -> entities.Event:
@@ -19,6 +21,7 @@ class OutboundEventRepository(repositories.EventRepository):
             "payload": payload,
             "queue": queue,
             "trace_id": trace_id,
+            "timestamp": timestamp,
         }
         if event_id:
             message_data.update({"id": str(event_id)})
@@ -35,6 +38,7 @@ class OutboundEventRepository(repositories.EventRepository):
             queue=outbound_message_model.queue,
             trace_id=outbound_message_model.trace_id,
             status=outbound_message_model.status,
+            timestamp=outbound_message_model.timestamp,
         )
 
     def get(self, event_id: uuid.UUID) -> entities.Event:
@@ -48,6 +52,7 @@ class OutboundEventRepository(repositories.EventRepository):
             queue=outbound_message_model.queue,
             trace_id=outbound_message_model.trace_id,
             status=outbound_message_model.status,
+            timestamp=outbound_message_model.timestamp,
         )
 
     def exists(self, event_id: uuid.UUID) -> bool:
@@ -69,4 +74,5 @@ class OutboundEventRepository(repositories.EventRepository):
             queue=outbound_message_model.queue,
             trace_id=outbound_message_model.trace_id,
             status=outbound_message_model.status,
+            timestamp=outbound_message_model.timestamp,
         )

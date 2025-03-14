@@ -4,6 +4,7 @@ from typing import Any
 
 import boto3
 from django.core.management import BaseCommand
+from django.utils import timezone
 
 from django_stream.core import constants, use_cases
 from django_stream.django_app import operations, repositories
@@ -29,4 +30,5 @@ class Command(BaseCommand):
             event_type=constants.EventType.TEST_EVENT,
             payload={"test": "event"},
             trace_id=uuid.uuid4(),
+            timestamp=timezone.now(),
         )
