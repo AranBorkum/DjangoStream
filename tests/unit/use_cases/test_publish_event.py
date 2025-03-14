@@ -1,6 +1,8 @@
 import uuid
 from typing import Any
 
+from django.utils import timezone
+
 from django_stream.core import constants, use_cases
 
 
@@ -16,4 +18,5 @@ class TestPublishEvent:
             payload=test_event_payload,
             queue="test-queue",
             trace_id=trace_id,
+            timestamp=timezone.now(),
         )

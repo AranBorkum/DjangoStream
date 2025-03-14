@@ -11,6 +11,7 @@ class EventModel(models.Model):
     payload = models.JSONField()
     type = models.CharField(max_length=255)
     queue = models.CharField(max_length=255)
+    timestamp = models.DateTimeField()
 
     class Meta:
         abstract = True

@@ -1,4 +1,5 @@
 import abc
+import datetime
 import uuid
 from typing import Any
 
@@ -12,6 +13,7 @@ class EventRepository(abc.ABC):
         event_type: str,
         payload: dict[str, Any],
         queue: str,
+        timestamp: datetime.datetime,
         trace_id: uuid.UUID,
         event_id: uuid.UUID | None = None,
     ) -> entities.Event: ...

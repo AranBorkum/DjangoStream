@@ -2,6 +2,7 @@ import uuid
 from typing import Any
 
 import pytest
+from django.utils import timezone
 
 from django_stream.core import constants
 
@@ -20,4 +21,5 @@ def retrieve_event_payload(
         "event_type": constants.EventType.TEST_EVENT,
         "queue": "test-queue",
         "payload": test_event_payload,
+        "timestamp": timezone.now().isoformat(),
     }

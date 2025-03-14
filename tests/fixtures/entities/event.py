@@ -20,4 +20,5 @@ def event_entity(
         queue="test-queue",
         trace_id=trace_id,
         status="PENDING",
+        timestamp=timezone.now(),
     )

@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Any
 
@@ -17,6 +18,7 @@ def outbound_event_repository(
             event_type: str,
             payload: dict[str, Any],
             queue: str,
+            timestamp: datetime.datetime,
             trace_id: uuid.UUID,
             event_id: uuid.UUID | None = None,
         ) -> entities.Event:
@@ -29,6 +31,7 @@ def outbound_event_repository(
                 queue=queue,
                 status=constants.OutboundEventStatus.PENDING,
                 trace_id=trace_id,
+                timestamp=timezone.now(),
             )
 
         def get(self, event_id: uuid.UUID) -> entities.Event:

@@ -3,6 +3,7 @@ from typing import Any
 
 import pytest
 from django import db
+from django.utils import timezone
 
 from django_stream.core import constants
 from django_stream.django_app import models, repositories
@@ -23,6 +24,7 @@ class TestInboundEventRepositoryPersist:
             queue="test-queue",
             event_type=constants.EventType.TEST_EVENT,
             payload=test_event_payload,
+            timestamp=timezone.now(),
         )
         assert models.InboundEventModel.objects.count() == 1
         model = models.InboundEventModel.objects.first()
@@ -43,6 +45,7 @@ class TestInboundEventRepositoryPersist:
             queue="test-queue",
             event_type=constants.EventType.TEST_EVENT,
             payload=test_event_payload,
+            timestamp=timezone.now(),
         )
         assert models.InboundEventModel.objects.count() == 1
         model = models.InboundEventModel.objects.first()
@@ -67,6 +70,7 @@ class TestInboundEventRepositoryPersist:
             queue="test-queue",
             event_type=constants.EventType.TEST_EVENT,
             payload=test_event_payload,
+            timestamp=timezone.now(),
         )
         assert models.InboundEventModel.objects.count() == 1
         with pytest.raises(db.IntegrityError):
@@ -76,6 +80,7 @@ class TestInboundEventRepositoryPersist:
                 queue="test-queue",
                 event_type=constants.EventType.TEST_EVENT,
                 payload=test_event_payload,
+                timestamp=timezone.now(),
             )
 
 

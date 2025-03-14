@@ -2,6 +2,7 @@ import uuid
 from typing import Any
 
 import pytest
+from django.utils import timezone
 
 from django_stream.core import constants
 from django_stream.django_app import models
@@ -17,4 +18,5 @@ def inbound_test_event_model(
         payload=test_event_payload,
         type=constants.EventType.TEST_EVENT,
         queue="queue",
+        timestamp=timezone.now(),
     )
