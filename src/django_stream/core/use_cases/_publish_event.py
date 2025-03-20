@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from collections.abc import Callable
 from typing import Any
@@ -19,9 +20,18 @@ class PublishEvent:
         self._operation = operation
 
     def __call__(
-        self, event_type: str, payload: dict[str, Any], queue: str, trace_id: uuid.UUID
+        self,
+        event_type: str,
+        payload: dict[str, Any],
+        queue: str,
+        trace_id: uuid.UUID,
+        timestamp: datetime.datetime,
     ) -> None:
         event = self._repository.persist(
-            event_type=event_type, payload=payload, queue=queue, trace_id=trace_id
+            event_type=event_type,
+            payload=payload,
+            queue=queue,
+            trace_id=trace_id,
+            timestamp=timestamp,
         )
         self._operation(self._client, event)

@@ -15,6 +15,7 @@ class Event:
         queue: str,
         trace_id: uuid.UUID,
         status: str,
+        timestamp: datetime.datetime,
     ):
         self.id = id_
         self.created_at = created_at
@@ -24,6 +25,7 @@ class Event:
         self.queue = queue
         self.trace_id = trace_id
         self.status = status
+        self.timestamp = timestamp
 
     @property
     def publishable_event(self) -> str:
@@ -32,4 +34,5 @@ class Event:
             "payload": self.payload,
             "queue": self.queue,
             "trace_id": str(self.trace_id),
+            "timestamp": self.timestamp.isoformat(),
         })

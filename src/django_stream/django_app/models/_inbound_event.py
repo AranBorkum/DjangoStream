@@ -30,4 +30,5 @@ class InboundEventModel(EventModel):
             event_type=self.type,
             queue=self.queue,
             status=self.status,
+            timestamp=self.timestamp,
         )
