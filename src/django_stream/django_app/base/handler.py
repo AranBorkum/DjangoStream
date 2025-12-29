@@ -30,8 +30,25 @@ class Handler(abc.ABC):
         try:
             self.handle(event)
             self._success(event=event)
+            logger.info(
+                "Event successfully handled",
+                extra={
+                    "event_id": event.id,
+                    "event_type": event.event_type,
+                    "queue": event.queue,
+                    "trace_id": event.trace_id,
+                },
+            )
         except Exception as exception:
-            logger.exception(f"{exception} encountered while handling event")
+            logger.exception(
+                f"{exception} encountered while handling event",
+                extra={
+                    "event_id": event.id,
+                    "event_type": event.event_type,
+                    "queue": event.queue,
+                    "trace_id": event.trace_id,
+                },
+            )
             self._failure(event=event)
         finally:
             return self._event_repository.get(event_id=event.id)

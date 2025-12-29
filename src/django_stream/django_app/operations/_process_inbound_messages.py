@@ -1,10 +1,13 @@
 import json
+import logging
 from typing import Any
 
 from django.db import transaction
 
 from django_stream.core import types
 from django_stream.django_app import registers
+
+logger = logging.getLogger(__name__)
 
 
 @transaction.atomic
@@ -37,5 +40,5 @@ def process_inbound_messages(
     for message in retrieve_response["Messages"]:
         try:
             _process_single_entry(sqs_client, message, queue_url)
-        except Exception as exception:
-            print(exception)
+        except Exception:
+            logger.exception("Error when processing inbound messages")
