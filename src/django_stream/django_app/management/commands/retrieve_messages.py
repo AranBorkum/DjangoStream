@@ -1,4 +1,5 @@
 import argparse
+import logging
 import time
 from typing import Any
 
@@ -8,6 +9,8 @@ from django.core.management import BaseCommand
 from django_stream.core import constants, use_cases
 from django_stream.django_app import operations
 from django_stream.utils.graceful_killer import GracefulKiller
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -19,6 +22,14 @@ class Command(BaseCommand):
     def handle(self, *args: tuple[Any, ...], **kwargs: dict[str, Any]) -> None:
         queue = str(kwargs["queue"])
         client = boto3.client(constants.AWSClient.SQS)
+        logger.info(
+            "Pulling messages from event queue",
+            extra={
+                "queue": queue,
+                "client": constants.AWSClient.SQS,
+            },
+        )
+
         retrieve_events = use_cases.RetrieveEvents(
             client=client,
             operation=operations.process_inbound_messages,
