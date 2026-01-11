@@ -41,15 +41,8 @@ wheels = [
 
 [[package]]
 name = "cache-register"
-version = "0.1.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b8/10/d359af7228497d86bfbf23b29bcaaa7d6018bf178a1bab9a5d5035754e8f/cache_register-0.1.1.tar.gz", hash = "sha256:6dd1abb2b67897e2c57519f0bfdfba1defcbd1044c994e1246e345b1da704e6f", size = 2946, upload-time = "2025-02-23T10:48:51.26Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/75/70/7f0487a9d4d62fb6408eeabd7dbec63f26da84bf247d0335f4554f2fd088/cache_register-0.1.1-py3-none-any.whl", hash = "sha256:334ceaeb4ef8e3d901eb889f1c923b3a5319c0b05dcbe71eec21f6459f0b3e0d", size = 2617, upload-time = "2025-02-23T10:48:48.826Z" },
-]
+version = "0.1.0"
+source = { git = "https://github.com/AranBorkum/CacheRegister-rs.git#e3d50b0c8ef5b91a7c583a937d6db8188b6adccb" }
 
 [[package]]
 name = "colorama"
@@ -98,7 +91,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.36.26" },
-    { name = "cache-register", specifier = ">=0.1.1" },
+    { name = "cache-register", git = "https://github.com/AranBorkum/CacheRegister-rs.git" },
     { name = "django", specifier = ">=5.1.6" },
     { name = "djangorestframework", specifier = ">=3.15.2" },
 ]
