@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "boto3>=1.36.26",
-    "cache-register",
+    "cache-register>=0.1.1",
     "django>=5.1.6",
     "djangorestframework>=3.15.2",
 ]
@@ -73,6 +73,3 @@ exclude = [
 ignore_missing_imports = true
 mypy_path = "src/"
 plugins = ["mypy_django_plugin.main"]
-
-[tool.uv.sources]
-cache-register = { git = "https://github.com/AranBorkum/CacheRegister-rs.git" }
