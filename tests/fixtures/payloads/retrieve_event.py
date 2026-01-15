@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 from django.utils import timezone
 
-from django_stream.core import constants
+from django_stream import constants
 
 
 @pytest.fixture

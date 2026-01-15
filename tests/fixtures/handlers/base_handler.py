@@ -1,8 +1,7 @@
 import pytest
 
-from django_stream.core import constants, entities
-from django_stream.django_app import repositories
-from django_stream.django_app.base import handler
+from django_stream import constants, entities, repositories
+from django_stream.base import handler
 
 
 @pytest.fixture

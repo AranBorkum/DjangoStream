@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import kombu
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +42,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "django_stream.django_app",
+    "django_stream",
+    "django_celery_results",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -124,3 +129,41 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AWS_DEFAULT_REGION = os.getenv("AWS_DEFAULT_REGION")
+
+# Celery core
+CELERY_BROKER_URL = "sqs://"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
+# Results backend (optional but recommended)
+CELERY_RESULT_BACKEND = "django-db"
+
+# SQS transport options
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "region": AWS_DEFAULT_REGION,
+    "visibility_timeout": 300,
+    "polling_interval": 1,
+    "wait_time_seconds": 20,   # long polling
+    "queue_name_prefix": "",   # optional
+}
+
+CELERY_TASK_QUEUES = (
+    kombu.Queue("default", routing_key="default"),
+    kombu.Queue("events", routing_key="events"),
+)
+
+CELERY_TASK_DEFAULT_QUEUE = "default"
+CELERY_TASK_DEFAULT_ROUTING_KEY = "default"
+
+# Hard & soft limits (critical)
+CELERY_TASK_TIME_LIMIT = 120
+CELERY_TASK_SOFT_TIME_LIMIT = 90
+
+# Reliability
+CELERY_ACKS_LATE = True
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1

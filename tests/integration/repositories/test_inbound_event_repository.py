@@ -5,8 +5,7 @@ import pytest
 from django import db
 from django.utils import timezone
 
-from django_stream.core import constants
-from django_stream.django_app import models, repositories
+from django_stream import constants, models, repositories
 
 
 class TestInboundEventRepositoryPersist:
