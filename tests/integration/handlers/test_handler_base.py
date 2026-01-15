@@ -1,8 +1,7 @@
 import pytest
 
-from django_stream.core import constants
-from django_stream.django_app import models
-from django_stream.django_app.base import handler
+from django_stream import constants, models
+from django_stream.base import handler
 
 
 class TestHandler:

@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 import uuid
 from typing import Any
@@ -5,14 +6,14 @@ from typing import Any
 import pytest
 from django.utils import timezone
 
-from django_stream.core import constants, entities, repositories
+from django_stream import constants, entities, repository_interfaces
 
 
 @pytest.fixture
 def outbound_event_repository(
     event_entity: entities.Event,
-) -> repositories.EventRepository:
-    class MockOutboundEventRepository(repositories.EventRepository):
+) -> repository_interfaces.EventRepository:
+    class MockOutboundEventRepository(repository_interfaces.EventRepository):
         def persist(
             self,
             event_type: str,
@@ -23,7 +24,7 @@ def outbound_event_repository(
             event_id: uuid.UUID | None = None,
         ) -> entities.Event:
             return entities.Event(
-                id_=event_id or uuid.uuid4(),
+                id=event_id or uuid.uuid4(),
                 created_at=timezone.now(),
                 updated_at=timezone.now(),
                 payload=payload,
@@ -41,8 +42,8 @@ def outbound_event_repository(
             return False
 
         def set_status(self, event_id: uuid.UUID, status: str) -> entities.Event:
-            new_entity = event_entity
-            new_entity.status = status
-            return new_entity
+            entity_as_dict = dataclasses.asdict(event_entity)
+            entity_as_dict.update({"status": status})
+            return entities.Event(**entity_as_dict)
 
     return MockOutboundEventRepository()

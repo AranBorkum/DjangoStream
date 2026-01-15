@@ -1,8 +1,8 @@
 import uuid
 from typing import Any
 
-from django_stream.django_app import serializers
-from django_stream.django_app.registers import serializers as serializer_registers
+from django_stream import serializers
+from django_stream.registers import serializers as serializer_registers
 
 
 class TestRetrieveEventSerializer:
