@@ -1,28 +1,45 @@
+from __future__ import annotations
+
+import dataclasses
 import datetime
 import json
 import typing
 import uuid
 
-import boto3
-
-from django_stream import constants, repository_interfaces
-from django_stream.usecases._publisher import Publisher
+from django_stream import constants, entities
 
 
-class PublishEventWithLambda(Publisher):
-    response: dict[str, typing.Any]
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class PublishEventWithLambda:
+    repository: _Repository
+    client: _Client
+    invocation_type: constants.LambdaInvocationType
+    function_name: str
 
-    def __init__(
-        self,
-        invocation_type: constants.LambdaInvocationType,
-        function_name: str,
-        repository: repository_interfaces.EventRepository,
-    ) -> None:
-        super().__init__(repository=repository)
-        self._invocation_type = invocation_type
-        self._function_name = function_name
+    class _Repository(typing.Protocol):
+        def persist(
+            self,
+            event_type: constants.EventType,
+            payload: dict[str, typing.Any],
+            queue: str,
+            timestamp: datetime.datetime,
+            trace_id: uuid.UUID,
+            event_id: uuid.UUID | None = None,
+        ) -> entities.Event: ...
 
-    def publish(
+        def set_status(
+            self, *, event_id: uuid.UUID, status: constants.OutboundEventStatus
+        ) -> entities.Event: ...
+
+    class _Client(typing.Protocol):
+        def invoke(
+            self,
+            FunctionName: str,
+            InvocationType: constants.LambdaInvocationType,
+            Payload: bytes,
+        ) -> None: ...
+
+    def __call__(
         self,
         event_type: constants.EventType,
         payload: dict[str, typing.Any],
@@ -30,9 +47,7 @@ class PublishEventWithLambda(Publisher):
         trace_id: uuid.UUID,
         timestamp: datetime.datetime,
     ) -> None:
-        lambda_client = boto3.client(constants.AWSClient.LAMBDA)
-
-        event = self._repository.persist(
+        event = self.repository.persist(
             event_type=event_type,
             payload=payload,
             queue=queue,
@@ -40,9 +55,12 @@ class PublishEventWithLambda(Publisher):
             timestamp=timestamp,
         )
 
-        self.response = lambda_client.invoke(
-            FunctionName=self._function_name,
-            InvocationType=self._invocation_type,
+        self.client.invoke(
+            FunctionName=self.function_name,
+            InvocationType=self.invocation_type,
             Payload=json.dumps(event.as_serializable_dict).encode("utf-8"),
         )
-        self._mark_as_handled(event_id=event.id)
+        self.repository.set_status(
+            event_id=event.id,
+            status=constants.OutboundEventStatus.PUBLISHED,
+        )

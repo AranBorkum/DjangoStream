@@ -4,6 +4,7 @@ import json
 import typing
 import uuid
 
+import boto3
 from django.core.management.base import BaseCommand, CommandError
 
 from django_stream import constants, repositories, usecases
@@ -50,34 +51,11 @@ class Command(BaseCommand):
 
         return output_payload
 
-    def _generate_output(
-        self, invocation_type: str, response: dict[str, typing.Any]
-    ) -> None:
-        if invocation_type == "RequestResponse":
-            response_payload = response["Payload"].read()
-            try:
-                decoded = json.loads(response_payload)
-            except json.JSONDecodeError:
-                decoded = response_payload.decode("utf-8")
-
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "✅ Lambda invoked successfully\n"
-                    f"Response:\n{json.dumps(decoded, indent=2)}"
-                )
-            )
-        else:
-            self.stdout.write(
-                self.style.SUCCESS(
-                    "✅ Lambda invoked asynchronously\n"
-                    f"Request ID: {response['ResponseMetadata']['RequestId']}"
-                )
-            )
-
     def handle(
         self, *args: tuple[typing.Any, ...], **options: dict[str, typing.Any]
     ) -> None:
         payload = self._generate_payload(options=options)
+        lambda_client = boto3.client(constants.AWSClient.LAMBDA)
         invocation_type = (
             constants.LambdaInvocationType.EVENT
             if options["async"]
@@ -86,20 +64,17 @@ class Command(BaseCommand):
         function_name = str(options["function_name"])
 
         repository = repositories.OutboundEventRepository()
-        usecase = usecases.PublishEventWithLambda(
+        publish_with_lambda = usecases.PublishEventWithLambda(
             repository=repository,
+            client=lambda_client,
             invocation_type=invocation_type,
             function_name=function_name,
         )
 
-        usecase.publish(
+        publish_with_lambda(
             event_type=constants.EventType.TEST_EVENT,
             payload=payload,
             queue="events",
             trace_id=uuid.uuid4(),
             timestamp=datetime.datetime.now(tz=datetime.UTC),
-        )
-
-        self._generate_output(
-            invocation_type=invocation_type, response=usecase.response
         )

@@ -1,2 +1,0 @@
-class FailureToCommunicateWithAwsSqs(Exception):
-    pass

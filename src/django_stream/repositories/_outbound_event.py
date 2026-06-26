@@ -1,15 +1,15 @@
 import datetime
+import typing
 import uuid
-from typing import Any
 
-from django_stream import entities, models, repository_interfaces
+from django_stream import constants, entities, models
 
 
-class OutboundEventRepository(repository_interfaces.EventRepository):
+class OutboundEventRepository:
     def persist(
         self,
-        event_type: str,
-        payload: dict[str, Any],
+        event_type: constants.EventType,
+        payload: dict[str, typing.Any],
         queue: str,
         timestamp: datetime.datetime,
         trace_id: uuid.UUID,
@@ -58,7 +58,9 @@ class OutboundEventRepository(repository_interfaces.EventRepository):
         exists: bool = models.OutboundEventModel.objects.filter(id=event_id).exists()
         return exists
 
-    def set_status(self, event_id: uuid.UUID, status: str) -> entities.Event:
+    def set_status(
+        self, *, event_id: uuid.UUID, status: constants.OutboundEventStatus
+    ) -> entities.Event:
         outbound_message_model = (
             models.OutboundEventModel.objects.select_for_update().get(id=event_id)
         )

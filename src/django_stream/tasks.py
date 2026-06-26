@@ -1,17 +1,15 @@
-import datetime
-import json
 import logging
 import typing
 
-from celery import shared_task
-from celery.exceptions import SoftTimeLimitExceeded
+import celery
+from celery import exceptions as celery_exceptions
 
-from django_stream import constants, entities, usecases
+from django_stream import registers, usecases
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(  # type: ignore[untyped-decorator]
+@celery.shared_task(  # type: ignore[untyped-decorator]
     bind=True,
     autoretry_for=(Exception,),
     retry_backoff=True,
@@ -25,23 +23,13 @@ def process_event(self: typing.Any, event: dict[str, typing.Any]) -> None:
     Idempotent SQS-backed Celery task.
     """
     try:
-        payload = json.loads(event["body"])
-        event_entity = entities.Event(
-            id=event["id"],
-            created_at=datetime.datetime.now(),
-            updated_at=datetime.datetime.now(),
-            payload=payload["payload"],
-            event_type=payload["event_type"],
-            queue=payload["queue"],
-            trace_id=event["trace_id"],
-            status=constants.InboundEventStatus.PENDING,
-            timestamp=datetime.datetime.fromisoformat(event["timestamp"]),
+        process_inbound_event = usecases.ProcessInbountEvent(
+            serializer_register=registers.serializers,
+            handler_register=registers.handlers,
         )
-        usecase = usecases.ProcessInboundEvent()
-        usecase.process(event=event_entity)
-
-    except SoftTimeLimitExceeded:
-        logger.warning("Soft time limit exceeded for %s", event)
+        process_inbound_event(event=event)
+    except celery_exceptions.SoftTimeLimitExceeded:
+        logger.warning(f"Soft time limit exceeded for {event}")
         raise
 
     except Exception as exc:

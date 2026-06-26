@@ -55,11 +55,11 @@ class Command(BaseCommand):
     ) -> None:
         payload = self._generate_payload(options=options)
         repository = repositories.OutboundEventRepository()
-        usecase = usecases.PublishEventWithSQS(
+        publish_with_sqs = usecases.PublishEventWithSQS(
             repository=repository,
         )
 
-        usecase.publish(
+        publish_with_sqs(
             event_type=constants.EventType.TEST_EVENT,
             payload=payload,
             queue="events",

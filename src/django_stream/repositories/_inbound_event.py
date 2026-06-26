@@ -1,15 +1,15 @@
 import datetime
+import typing
 import uuid
-from typing import Any
 
-from django_stream import entities, models, repository_interfaces
+from django_stream import entities, models
 
 
-class InboundEventRepository(repository_interfaces.EventRepository):
+class InboundEventRepository:
     def persist(
         self,
         event_type: str,
-        payload: dict[str, Any],
+        payload: dict[str, typing.Any],
         queue: str,
         timestamp: datetime.datetime,
         trace_id: uuid.UUID,

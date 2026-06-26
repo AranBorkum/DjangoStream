@@ -63,7 +63,7 @@ wheels = [
 [[package]]
 name = "cache-register"
 version = "0.1.1"
-source = { git = "https://github.com/AranBorkum/CacheRegister.git#1637cfb755386961e19f679e408a98a7d8002b42" }
+source = { git = "https://github.com/AranBorkum/CacheRegister#bb4ca0144f6d811c636673846c036bf6fcc45b94" }
 dependencies = [
     { name = "django" },
 ]
@@ -237,7 +237,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "boto3", specifier = ">=1.36.26" },
-    { name = "cache-register", git = "https://github.com/AranBorkum/CacheRegister.git" },
+    { name = "cache-register", git = "https://github.com/AranBorkum/CacheRegister" },
     { name = "celery", extras = ["sqs"], specifier = ">=5.6.2" },
     { name = "django", specifier = ">=5.1.6" },
     { name = "django-celery-beat", specifier = ">=2.8.1" },

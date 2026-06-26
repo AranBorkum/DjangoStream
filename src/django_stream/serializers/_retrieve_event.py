@@ -4,7 +4,7 @@ from django_stream import constants, registers
 from django_stream.base import serializer
 
 
-@registers.serializers.register(key=constants.EventType.TEST_EVENT.value)
+@registers.serializers.register(key=constants.EventType.TEST_EVENT)
 @serializer.event_serializer
 class RetrieveEventPayloadSerializer(rest_serializers.Serializer):  # type: ignore [misc]
     test = rest_serializers.CharField(max_length=255)

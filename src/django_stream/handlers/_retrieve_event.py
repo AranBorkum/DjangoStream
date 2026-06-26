@@ -7,7 +7,7 @@ from django_stream.registers import handlers
 logger = logging.getLogger(__name__)
 
 
-@handlers.register(key=constants.EventType.TEST_EVENT.value)
+@handlers.register(key=constants.EventType.TEST_EVENT)
 class RetrieveEventHandler(handler.Handler):
     _event_repository = repositories.InboundEventRepository()
     _success_status = constants.InboundEventStatus.HANDLED
