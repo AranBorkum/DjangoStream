@@ -14,12 +14,24 @@ def test_event_payload() -> dict[str, Any]:
 
 @pytest.fixture
 def retrieve_event_payload(
-    event_id: uuid.UUID, trace_id: uuid.UUID, test_event_payload: dict[str, Any]
+    trace_id: uuid.UUID, test_event_payload: dict[str, Any]
 ) -> dict[str, Any]:
     return {
         "trace_id": str(trace_id),
         "event_type": constants.EventType.TEST_EVENT,
         "queue": "test-queue",
+        "payload": test_event_payload,
+        "timestamp": timezone.now().isoformat(),
+    }
+
+
+@pytest.fixture
+def retrieve_event_invalid_payload(
+    trace_id: uuid.UUID, test_event_payload: dict[str, Any]
+) -> dict[str, Any]:
+    return {
+        "trace_id": str(trace_id),
+        "event_type": constants.EventType.TEST_EVENT,
         "payload": test_event_payload,
         "timestamp": timezone.now().isoformat(),
     }

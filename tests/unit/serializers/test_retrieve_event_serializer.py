@@ -14,14 +14,15 @@ class TestRetrieveEventSerializer:
             data=retrieve_event_payload
         ).is_valid()
 
-    def test_missing_params(self, retrieve_event_payload: dict[str, Any]) -> None:
+    def test_missing_params(
+        self, retrieve_event_invalid_payload: dict[str, Any]
+    ) -> None:
         assert not serializers.RetrieveEventPayloadSerializer(
-            data=retrieve_event_payload
+            data=retrieve_event_invalid_payload
         ).is_valid()
 
     def test_serialize_from_register(
         self, event_id: uuid.UUID, retrieve_event_payload: dict[str, Any]
     ) -> None:
-        retrieve_event_payload.update({"id": event_id})
         serializer = serializer_registers.get(retrieve_event_payload["event_type"])
         assert serializer(data=retrieve_event_payload).is_valid()

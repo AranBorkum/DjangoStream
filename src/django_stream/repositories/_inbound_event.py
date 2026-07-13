@@ -13,7 +13,6 @@ class InboundEventRepository(repository_interfaces.EventRepository):
         queue: str,
         timestamp: datetime.datetime,
         trace_id: uuid.UUID,
-        event_id: uuid.UUID | None = None,
     ) -> entities.Event:
         message_data = {
             "type": event_type,
@@ -22,8 +21,6 @@ class InboundEventRepository(repository_interfaces.EventRepository):
             "trace_id": trace_id,
             "timestamp": timestamp,
         }
-        if event_id:
-            message_data.update({"id": str(event_id)})
 
         inbound_message_model = models.InboundEventModel.objects.create(**message_data)
         return entities.Event(
