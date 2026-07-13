@@ -15,7 +15,6 @@ class EventRepository(abc.ABC):
         queue: str,
         timestamp: datetime.datetime,
         trace_id: uuid.UUID,
-        event_id: uuid.UUID | None = None,
     ) -> entities.Event: ...
 
     @abc.abstractmethod
